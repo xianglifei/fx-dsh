@@ -1,0 +1,25 @@
+{
+  "name": "dsh-peak-hours",
+  "version": "0.1.0",
+  "description": "DSH Web 输入框忙时着色提醒：DeepSeek 高峰时段（北京时间周一至周五 9:00–12:00、14:00–18:00，周末全天闲时）把聊天输入框背景染成半透明橙色，闲时恢复原样",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "peak-hours"
+  ],
+  "type": "module",
+  "main": "lib/index.js",
+  "files": [
+    "lib",
+    "assets",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "license": "MIT",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}
