@@ -3,6 +3,7 @@
 
 # ZCode 会话产物
 .zcode/
+.zcodeignore
 
 # Node
 node_modules/
