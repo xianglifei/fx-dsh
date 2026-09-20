@@ -9,9 +9,9 @@ DeepSeek API 自 2026-08-17 起实行峰谷定价（闲时价格为高峰的一�
 
 来源：[DeepSeek 官方「模型 & 价格」](https://api-docs.deepseek.com/zh-cn/quick_start/pricing/)
 
-本插件在 Web UI 的聊天输入框上做颜色提醒：忙时给输入框加半透明橙色底色，闲时保持原样。时段判定在浏览器端完成（固定 UTC+8 偏移，与本机时区无关），每 30 秒刷新一次，页面重渲染后自动重涂。
+本插件在 Web UI 的聊天输入区做状态提醒：忙时把**整张输入卡片**染成淡橙状态色——细橙描边 + 顶部 2px 橙条，颜色变化带 0.5s 渐变过渡，圆角与原生投影完整保留；闲时恢复原样。时段判定在浏览器端完成（固定 UTC+8 偏移，与本机时区无关），每 30 秒检查一次；忙时状态挂在页面根元素（`<html class="dsh-peak">`）上，配色全部走结构化 CSS，React 重渲染不影响着色。
 
-![忙时：输入框橙色底色](./screenshot-peak.png)
+![忙时效果（v0.1 旧版截图：输入区平涂橙色；v0.2 起改为整卡淡橙状态染——细描边 + 顶边条 + 渐变过渡，可在 DSH Web 地址后加 `#dsh-peak-demo` 查看新版）](./screenshot-peak.png)
 
 ## 安装（本地开发）
 
@@ -35,6 +35,7 @@ dsh plugin --profile web remove dsh-peak-hours
 
 ## 已知限制
 
-- 输入框靠 DOM 结构识别：`#root` 下排除弹窗与 whale 挂件面板，优先取祖先链带 `composer` 语义类名的候选，退化时取唯一候选。刻意不依赖元素尺寸——后台/被遮挡标签页里渲染被冻结，`offsetWidth` 是陈旧值，尺寸判断会间歇性误杀。DSH 前端大改版时需要同步调整 `assets/peak-hours.js` 里的 `candidates()`。
+- 输入卡片靠结构选择器识别：`#root` 下**最外层**带 `composer` 语义类名的容器（`[class*="composer"]:not([class*="composer"] *)`）。DSH 前端改版改掉类名时会直接失去效果（旧版的"唯一候选兜底"在纯 CSS 里表达不了），届时同步调整 `assets/peak-hours.js` 里 `injectStyle()` 的选择器即可。
+- 染色接管卡片的 `background-color`、`background-image` 与 `outline`：若原生卡片使用渐变背景会被覆盖；`box-shadow` 刻意未动，原生投影保留。
 - 时段表硬编码在 `assets/peak-hours.js` 的 `isPeakNow()`，官方调整时段时改这一处即可。
-- React 重渲染会抹掉外加 class，脚本靠 MutationObserver + 轮询每轮重申；标签页切走再切回最多等一个轮询周期（30 秒）恢复。
+- 时段边界切换最多延迟一个轮询周期（30 秒）；标签页切走再切回时通过 `visibilitychange` 立即恢复。
